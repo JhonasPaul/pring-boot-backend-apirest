@@ -14,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +117,7 @@ public class ClienteController {
                     .stream()
                     .map(err -> "El campo '".concat(err.getField()).concat( "' ").concat(err.getDefaultMessage()))
                     .collect(Collectors.toList());
+            /*manda el mensaje cuando hay error a len los campos*/
             response.put("errors", errors);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
@@ -144,11 +144,6 @@ public class ClienteController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
-
-
-
-
-
     @DeleteMapping("/clientes/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
 
@@ -168,6 +163,11 @@ public class ClienteController {
     }
 
 }
+
+
+
+
+
 
 
 

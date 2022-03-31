@@ -14,8 +14,8 @@ public interface iClienteService {
     public Page<Cliente> listarClientes(Pageable pageable);
 
 
-    public Cliente agregarCliente(Cliente id_cliente);
-    public Cliente listarClientePorId(Long  id_cliente);
+    public Cliente agregarCliente(Cliente cliente);
+    public Cliente listarClientePorId(Long  id);
     public void eliminarCliente(Long id_cliente);
 
 

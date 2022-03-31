@@ -15,7 +15,7 @@ public class Cliente implements Serializable {
     private Long id;
 
     /*@NotEmpty debe estar acompañado del @Size y se le puede añadir el mensaje de salida en el front  @NotEmpty(message = "no puede estar ")*/
-    @NotEmpty()
+    @NotEmpty(message = "es obligatorio!")
     @Size(min = 4, max = 20)
     /*los campos por defecto son nulos*/
     @Column(nullable = false)
