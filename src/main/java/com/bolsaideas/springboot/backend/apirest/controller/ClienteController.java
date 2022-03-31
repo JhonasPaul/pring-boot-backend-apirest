@@ -12,11 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -162,7 +168,41 @@ public class ClienteController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
+    /*METODO PARA SUBIR IMAGEN*/
+    /*RequestParam es para enviar parametros mediante una url*/
+    @PostMapping("/clientes/upload")
+    public ResponseEntity<?>upload(@RequestParam("archivo")MultipartFile archivo, @RequestParam("id")Long id){
+        Map<String, Object> response = new HashMap<>();
+        Cliente cliente = service.listarClientePorId(id);
+        /*validar si hay imagen*/
+        if(!archivo.isEmpty()){
+            /*obtener el nombre original del archivo  se guarda nombreArchivoen*/
+            /*UUID para concatenar un identificador unico y aleatoreo al nombre de la archvo |                       emmplaza los espacios enblanaco por nada*/
+            String nombreArchivo = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename().replace(" ","");/*--> */
+/*obtener la ruta del cliente | carpeta uploads| resolver el nombreArchivo para concatenar dentro del upload como unica ruta*/
+            Path rutaArvhivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();/*obtenemos la ruta caompleta con la ubicacion*/
+            /*copea el archivo que se suve al servidor a la ruta escogida*/
+            try {
+                Files.copy(archivo.getInputStream(),rutaArvhivo);
+            } catch (IOException e) {
+                response.put("mensaje", "error al subir la imagen " + nombreArchivo);
+                response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            cliente.setFoto(nombreArchivo);
+            service.agregarCliente(cliente);
+            response.put("cliente", cliente);
+            response.put("mensaje", "has subido correctamente la imgaen " + nombreArchivo);
+        }
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+    }
 }
+
+
+
+
+
+
 
 
 

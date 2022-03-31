@@ -36,6 +36,17 @@ public class Cliente implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date createAt;
 
+    private String foto;
+
+    /*FOTO*/
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
     /*crea la fecha del cliente automaticamente cuando se crea un cliente*/
     @PrePersist
     public void prePersist(){
