@@ -47,11 +47,11 @@ public class Cliente implements Serializable {
         this.foto = foto;
     }
 
-    /*crea la fecha del cliente automaticamente cuando se crea un cliente*/
-    @PrePersist
-    public void prePersist(){
-        createAt = new Date();
-    }
+//    /*crea la fecha del cliente automaticamente cuando se crea un cliente*/
+//    @PrePersist
+//    public void prePersist(){
+//        createAt = new Date();
+//    }
 
     public Long getId() {
         return id;

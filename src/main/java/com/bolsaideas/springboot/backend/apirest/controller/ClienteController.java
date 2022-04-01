@@ -3,10 +3,15 @@ package com.bolsaideas.springboot.backend.apirest.controller;
 import com.bolsaideas.springboot.backend.apirest.model.entity.Cliente;
 import com.bolsaideas.springboot.backend.apirest.model.service.iClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+
+
+import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -155,6 +162,17 @@ public class ClienteController {
 
         Map<String, Object> response = new HashMap<>();
         try {
+            /*borrar foto*/
+            Cliente cliente = service.listarClientePorId(id);
+            String nombreFotoAnterior = cliente.getFoto();
+
+            if (nombreFotoAnterior != null && nombreFotoAnterior.length() > 0){
+                Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+                File archivoFotoAnterior = rutaFotoAnterior.toFile();
+                if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()){
+                    archivoFotoAnterior.delete();
+                }
+            }
             service.eliminarCliente(id);
 
         } catch (DataAccessException e) {
@@ -179,7 +197,7 @@ public class ClienteController {
             /*obtener el nombre original del archivo  se guarda nombreArchivoen*/
             /*UUID para concatenar un identificador unico y aleatoreo al nombre de la archvo |                       emmplaza los espacios enblanaco por nada*/
             String nombreArchivo = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename().replace(" ","");/*--> */
-/*obtener la ruta del cliente | carpeta uploads| resolver el nombreArchivo para concatenar dentro del upload como unica ruta*/
+/*obtener la ruta que contiene la image | carpeta uploads| resolver el nombreArchivo para concatenar dentro del upload como unica ruta*/
             Path rutaArvhivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();/*obtenemos la ruta caompleta con la ubicacion*/
             /*copea el archivo que se suve al servidor a la ruta escogida*/
             try {
@@ -189,6 +207,15 @@ public class ClienteController {
                 response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+            /*si se actualiza al cliente con una nueva foto, borra la anterior*/
+            String nombreFotoAnterior = cliente.getFoto();
+            if (nombreFotoAnterior != null && nombreFotoAnterior.length() > 0){
+                Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+                File archivoFotoAnterior = rutaFotoAnterior.toFile();
+                if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()){
+                    archivoFotoAnterior.delete();
+                }
+            }
             cliente.setFoto(nombreArchivo);
             service.agregarCliente(cliente);
             response.put("cliente", cliente);
@@ -196,6 +223,29 @@ public class ClienteController {
         }
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
+    /*metodo para mostrar foto al cliente*/
+    @GetMapping("/uploads/img/{nombreFoto:.+}")
+    public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
+        Path rutaArvhivo = Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
+        Resource recurso = null;
+        try {
+            /*importar de import org.springframework.core.io.UrlResource;*/
+            recurso =  new UrlResource(rutaArvhivo.toUri());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        /*validar que elrecurso existe*/
+        if(!recurso.exists() && !recurso.isReadable()){
+            throw  new RuntimeException("Error, no se pudo cargar la iamgen: " + nombreFoto);
+        }
+        /*forzar la iamenpara que se pueda descargar*/
+        HttpHeaders cabecera  = new HttpHeaders();
+        cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() +"\"" );
+        /*recurso contiene la imagen, cebecera para forzar la descarga*/
+        return new ResponseEntity<Resource>((Resource) recurso, cabecera, HttpStatus.OK);
+    }
+
+
 }
 
 
