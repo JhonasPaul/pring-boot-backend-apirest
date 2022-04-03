@@ -2,6 +2,8 @@ package com.bolsaideas.springboot.backend.apirest.controller;
 
 import com.bolsaideas.springboot.backend.apirest.model.entity.Cliente;
 import com.bolsaideas.springboot.backend.apirest.model.service.iClienteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
@@ -37,6 +39,8 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:4200/")
 public class ClienteController {
 
+    /*para ver la ruta dee la foto(opcional)*/
+    private final Logger log = LoggerFactory.getLogger(ClienteController.class);
     @Autowired
     iClienteService service;
 
@@ -234,9 +238,16 @@ public class ClienteController {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        /*validar que elrecurso existe*/
         if(!recurso.exists() && !recurso.isReadable()){
-            throw  new RuntimeException("Error, no se pudo cargar la iamgen: " + nombreFoto);
+            /*si se borra la iamgen del backend mostrara no-usuario.png*/
+            rutaArvhivo = Paths.get("src/main/resources/static/images").resolve("no-usuario.png").toAbsolutePath();
+            try {
+
+                recurso =  new UrlResource(rutaArvhivo.toUri());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            log.error("Error, no se pudo cargar la iamgen: " + nombreFoto);
         }
         /*forzar la iamenpara que se pueda descargar*/
         HttpHeaders cabecera  = new HttpHeaders();
@@ -244,8 +255,6 @@ public class ClienteController {
         /*recurso contiene la imagen, cebecera para forzar la descarga*/
         return new ResponseEntity<Resource>((Resource) recurso, cabecera, HttpStatus.OK);
     }
-
-
 }
 
 
