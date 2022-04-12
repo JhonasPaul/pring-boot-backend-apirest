@@ -61,6 +61,7 @@ public class ClienteController {
         return service.listarClientes(pageable);
     }
 
+    /*validacion: solo valida si se ingresa un id inexistente*/
     @GetMapping("/clientes/{id}")
     /*ResponseEntity(cuerpo de la respuessta) permite manejar mensajes de error y pasar clase entitty a al responsbody(la respuesta) */
     /* se pone ? para madnar un tipo de dato generico, un cliente, un mapa de respuestas(mensajes de error)*/
@@ -93,7 +94,7 @@ public class ClienteController {
     }
 
 
-
+/*validaciones: campos*/
     @PostMapping("/clientes")  /*agregar @Valid*/                                 /*BindingResult contiene los mensjes de error*/
     public ResponseEntity<?> create(@Valid @RequestBody Cliente cliente, BindingResult result) {
 
@@ -127,7 +128,7 @@ public class ClienteController {
 
 
 
-
+    /*validacion: solo valida si se ingresa un id inexistente y valida campos*/
     @PutMapping("/clientes/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable("id") Long id) {
         Cliente clienteActual = service.listarClientePorId(id);
@@ -142,6 +143,7 @@ public class ClienteController {
             response.put("errors", errors);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
+        /*valida si el cliente con el id ingresdo existe en la base de dato*/
         if (clienteActual == null) {
             response.put("mensaje", "Error: no se pudo editar,  el cliiente con el id: ".concat(id.toString()).concat("  no existe en la base de datos"));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -231,7 +233,7 @@ public class ClienteController {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        /*forzar la iamenpara que se pueda descargar*/
+        /*forzar la imagen para que se pueda descargar*/
         HttpHeaders cabecera  = new HttpHeaders();
         cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() +"\"" );
         /*recurso contiene la imagen, cebecera para forzar la descarga*/

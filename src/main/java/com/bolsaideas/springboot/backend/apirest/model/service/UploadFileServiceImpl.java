@@ -75,7 +75,7 @@ public class UploadFileServiceImpl implements iUploadFileService{
 
     /*obtenemos la ruta caompleta de "uploads" con la ubicacion y la retornamos*/
     @Override
-    public Path getPath(String nombreFoto) {
+    public Path getPath(String nombreFoto) {      /*resolve contiene el nombre y extencion de la foto*/
         return Paths.get(DIRECTORIO_UPLOAD).resolve(nombreFoto).toAbsolutePath();
     }
 }
