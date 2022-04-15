@@ -1,8 +1,11 @@
 package com.bolsaideas.springboot.backend.apirest.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -37,6 +40,13 @@ public class Cliente implements Serializable {
     private Date createAt;
 
     private String foto;
+
+    @NotNull(message = "la region no puede estar vacia")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")/*nombre de la tabla forenea en clientes*/
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Region region;
+
 
     /*FOTO*/
     public String getFoto() {
@@ -91,6 +101,14 @@ public class Cliente implements Serializable {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 
     public static final long serialVersionUID = 1L;

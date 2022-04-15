@@ -1,6 +1,7 @@
 package com.bolsaideas.springboot.backend.apirest.controller;
 
 import com.bolsaideas.springboot.backend.apirest.model.entity.Cliente;
+import com.bolsaideas.springboot.backend.apirest.model.entity.Region;
 import com.bolsaideas.springboot.backend.apirest.model.service.iClienteService;
 import com.bolsaideas.springboot.backend.apirest.model.service.iUploadFileService;
 import org.slf4j.Logger;
@@ -154,7 +155,8 @@ public class ClienteController {
             clienteActual.setNombre(cliente.getNombre());
             clienteActual.setEmail(cliente.getEmail());
             clienteActual.setCreateAt(cliente.getCreateAt());
-
+            clienteActual.setRegion(cliente.getRegion());
+            /*actualziar region*/
             clienteActual= service.agregarCliente(clienteActual);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al actualizar el cliente  la base de datos");
@@ -190,7 +192,7 @@ public class ClienteController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
-    /*METODO PARA AGREGAR IMAGEN AL CLIENTE*/
+    /*METODO PARA AGREGAR IMAGEN AL CLIENTE EN LA BASE DE DATOS*/
     /*RequestParam es para enviar parametros mediante una url*/
     @PostMapping("/clientes/upload")
     public ResponseEntity<?>upload(@RequestParam("archivo")MultipartFile archivo, @RequestParam("id")Long id){
@@ -225,7 +227,7 @@ public class ClienteController {
     /*metodo para mostrar foto al cliente*/
     @GetMapping("/uploads/img/{nombreFoto:.+}")
     public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
-//        Path rutaArvhivo = Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
+        Path rutaArvhivo = Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
         Resource recurso = null;
         try {
             /*uploadService.cargar() PARA DESCARFAR LA FOTO*/
@@ -240,6 +242,11 @@ public class ClienteController {
         return new ResponseEntity<Resource>((Resource) recurso, cabecera, HttpStatus.OK);
     }
 
+    /*listar regiones*/
+    @GetMapping("/clientes/regiones")
+    private List<Region> listarRegiones() {
+        return service.findAllRegiones();
+    }
 
 }
 

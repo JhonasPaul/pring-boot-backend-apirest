@@ -2,6 +2,7 @@ package com.bolsaideas.springboot.backend.apirest.model.service;
 
 import com.bolsaideas.springboot.backend.apirest.model.entity.Cliente;
 
+import com.bolsaideas.springboot.backend.apirest.model.entity.Region;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,5 +20,5 @@ public interface iClienteService {
     public void eliminarCliente(Long id_cliente);
 
 
-
+    public List<Region>findAllRegiones();
 }
