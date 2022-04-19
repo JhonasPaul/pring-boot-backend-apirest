@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 public class ClienteController {
 
     /*para ver la ruta dee la foto(opcional)*/
-    private final Logger log = LoggerFactory.getLogger(ClienteController.class);
+//    private final Logger log = LoggerFactory.getLogger(ClienteController.class);
     @Autowired
     iClienteService service;
     @Autowired
@@ -62,6 +63,7 @@ public class ClienteController {
         return service.listarClientes(pageable);
     }
 
+//    @Secured({"ROLE_USER","ROLE_ADMIN"})
     /*validacion: solo valida si se ingresa un id inexistente*/
     @GetMapping("/clientes/{id}")
     /*ResponseEntity(cuerpo de la respuessta) permite manejar mensajes de error y pasar clase entitty a al responsbody(la respuesta) */
@@ -94,7 +96,7 @@ public class ClienteController {
         return new ResponseEntity<Cliente>(cliente, HttpStatus.OK);
     }
 
-
+//    @Secured("ROLE_ADMIN")
 /*validaciones: campos*/
     @PostMapping("/clientes")  /*agregar @Valid*/                                 /*BindingResult contiene los mensjes de error*/
     public ResponseEntity<?> create(@Valid @RequestBody Cliente cliente, BindingResult result) {
@@ -128,8 +130,8 @@ public class ClienteController {
     }
 
 
-
-    /*validacion: solo valida si se ingresa un id inexistente y valida campos*/
+//    @Secured("ROLE_ADMIN")
+    /*validacion: solo valida si se ingresa un id inexistente y valida campos, no valida si no se ingresa un id*/
     @PutMapping("/clientes/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable("id") Long id) {
         Cliente clienteActual = service.listarClientePorId(id);
@@ -168,7 +170,7 @@ public class ClienteController {
         response.put("cliente: ", clienteActual);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
-
+//    @Secured("ROLE_ADMIN")
     @DeleteMapping("/clientes/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
 
@@ -192,6 +194,7 @@ public class ClienteController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
+//    @Secured({"ROLE_ADMIN","ROLE_USER"})
     /*METODO PARA AGREGAR IMAGEN AL CLIENTE EN LA BASE DE DATOS*/
     /*RequestParam es para enviar parametros mediante una url*/
     @PostMapping("/clientes/upload")
@@ -242,6 +245,7 @@ public class ClienteController {
         return new ResponseEntity<Resource>((Resource) recurso, cabecera, HttpStatus.OK);
     }
 
+//    @Secured("ROLE_ADMIN")
     /*listar regiones*/
     @GetMapping("/clientes/regiones")
     private List<Region> listarRegiones() {
