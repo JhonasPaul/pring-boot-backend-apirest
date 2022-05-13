@@ -33,11 +33,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(this.usuarioService).passwordEncoder(passwordEncoder());
     }
 
-
-    @Override
     @Bean("authenticationManager")
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     /*reglas de seguridad de las rutas, de los metodos Http por el lado de spring*/

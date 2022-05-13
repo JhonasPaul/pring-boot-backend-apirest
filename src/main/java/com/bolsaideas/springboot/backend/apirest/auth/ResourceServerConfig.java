@@ -31,8 +31,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/api/clientes/**").hasRole("ADMIN")/*lo que queda del crud put y delete son para ADMIN*/
                 .anyRequest().authenticated()
                 .and().cors().configurationSource(corsConfigurationSource());
-
-
     }
     @Bean
     /*importar de import org.springframework.web.cors.CorsConfigurationSource;*/

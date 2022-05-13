@@ -22,10 +22,10 @@ public class Cliente implements Serializable {
     @Size(min = 4, max = 20)
     /*los campos por defecto son nulos*/
     @Column(nullable = false)
-    private  String nombre;
+    private String nombre;
 
     @NotEmpty
-    private  String apellido;
+    private String apellido;
 
 
     @Email
@@ -41,6 +41,8 @@ public class Cliente implements Serializable {
 
     private String foto;
 
+
+    /*cliente hijo*/
     @NotNull(message = "la region no puede estar vacia")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")/*nombre de la tabla forenea en clientes*/

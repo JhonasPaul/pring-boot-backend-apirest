@@ -20,8 +20,16 @@ public class Usuario implements Serializable {
 
     private Boolean enabled;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)/*crea o guarda los roles tambien*/
+    @JoinTable(name = "usuarios_roles", joinColumns=@JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"})})/*evita que unusuario tenga rol repetido*/
+    private List<Rol> roles;
+
     private String nombre;
+
     private String apellido;
+
     @Column(unique = true)
     private String email;
 
@@ -49,11 +57,7 @@ public class Usuario implements Serializable {
         this.email = email;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)/*crea o guarda los roles tambien*/
-    @JoinTable(name = "usuarios_roles", joinColumns=@JoinColumn(name = "usuario_id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id"),
-    uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"})})/*evita que unusuario tenga rol repetido*/
-    private List<Rol> roles;
+
 
     public Long getId() {
         return id;

@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import java.util.Arrays;
 
@@ -57,6 +58,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         .accessTokenConverter(accessTokenConverter())/*click derecho e implementar metodo*/
                 .tokenEnhancer(tokenEnhancerChain);
 
+    }
+
+    @Bean
+    public JwtTokenStore tokenStore() {
+        return new JwtTokenStore(accessTokenConverter());
     }
     /*codifica y decodifica el username y el password*/
     @Bean
